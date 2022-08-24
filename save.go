@@ -14,10 +14,7 @@ type Save struct {
 func (s *Save) SaveOne() (*mongo.InsertOneResult, error) {
 	if s.getData() != nil {
 		res, err := client.Database(database).Collection(s.getNameCollection()).InsertOne(ctx, s.getData())
-		if err != nil {
-			return res, err
-		}
-		return res, nil
+		return res, err
 	} else {
 		return nil, fmt.Errorf("no data to save")
 	}
