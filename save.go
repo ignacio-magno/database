@@ -13,7 +13,7 @@ type Save struct {
 
 func (s *Save) SaveOne() (*mongo.InsertOneResult, error) {
 	if s.getData() != nil {
-		res, err := client.Database(s.getDatabase()).Collection(s.getNameCollection()).InsertOne(ctx, s.getData())
+		res, err := client.Database(database).Collection(s.getNameCollection()).InsertOne(ctx, s.getData())
 		if err != nil {
 			return res, err
 		}
@@ -25,7 +25,7 @@ func (s *Save) SaveOne() (*mongo.InsertOneResult, error) {
 
 func (s *Save) Save() (*mongo.InsertManyResult, error) {
 	if s.getDatas() != nil {
-		res, err := client.Database(s.getDatabase()).Collection(s.getNameCollection()).InsertMany(ctx, s.getDatas())
+		res, err := client.Database(database).Collection(s.getNameCollection()).InsertMany(ctx, s.getDatas())
 		if err != nil {
 			return res, err
 		}
