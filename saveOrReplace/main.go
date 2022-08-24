@@ -35,6 +35,7 @@ func saveNew(s SaveOrReplace) error {
 }
 
 func replace(s SaveOrReplace) error {
+	var i interface{}
 	db := s.GetDatabase()
 
 	db.Filter = s.GetFilter()
@@ -42,6 +43,7 @@ func replace(s SaveOrReplace) error {
 	save := database.FindAndModify{
 		Db:   db,
 		Data: s.GetObject(),
+		Bind: &i,
 	}
 
 	return save.FindOneAndReplace()
