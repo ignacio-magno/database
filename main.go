@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -19,7 +18,9 @@ var database = "test"
 func init() {
 	var err error
 
-	ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+	//ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
+
+	ctx = context.Background()
 
 	connectionString := fmt.Sprintf("mongodb+srv://%v:%v@%v",
 		os.Getenv("USERNAME"),
