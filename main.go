@@ -15,7 +15,7 @@ var cancel context.CancelFunc
 
 var database = "test"
 
-func init() {
+func Connect() {
 	var err error
 
 	//ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
