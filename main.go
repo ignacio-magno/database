@@ -16,7 +16,8 @@ var ctx context.Context
 
 var database = "test"
 
-func Connect() {
+// Connect to the database
+func Connect() error {
 	var err error
 
 	//ctx, cancel = context.WithTimeout(context.Background(), 5*time.Second)
@@ -37,14 +38,16 @@ func Connect() {
 
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
+		return err
 	}
 
 	err = client.Ping(ctx, nil)
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
+		return err
 	}
+
+	return nil
 }
 
 func Close() {

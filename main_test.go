@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ignacioMagno/database"
+	database "github.com/ignacioMagno/database"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -13,7 +13,12 @@ type testStruct struct {
 }
 
 func TestSaveOne(m *testing.T) {
-	database.Connect()
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
 	s := database.Save{
 		Db: database.Db{
 			NameCollection: "test",
@@ -26,15 +31,22 @@ func TestSaveOne(m *testing.T) {
 		},
 	}
 
-	_, err := s.SaveOne()
+	i, err := s.SaveOne()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return
 	}
+
+	fmt.Printf("i: %v\n", i.InsertedID)
 }
 
 func TestSaveMany(t *testing.T) {
-	database.Connect()
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
 	s := database.Save{
 		Db: database.Db{
 			NameCollection: "test",
@@ -64,86 +76,120 @@ func TestSaveMany(t *testing.T) {
 }
 
 func TestFind(t *testing.T) {
-	database.Connect()
-	var tstruct []testStruct
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	var tests []testStruct
 	find := database.Find{
 		Db: database.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
 		},
-		Bind: &tstruct,
+		Bind: &tests,
 	}
 
-	err := find.Find()
+	err = find.Find()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return
 	}
 
-	for i, ts := range tstruct {
+	for i, ts := range tests {
 		fmt.Printf("%v: %v\n", i, ts.Test)
 	}
-	database.Close()
 }
 
 func TestFindOne(t *testing.T) {
-	var tstruct testStruct
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	var testObj testStruct
 	find := database.Find{
 		Db: database.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
 		},
-		Bind: &tstruct,
+		Bind: &testObj,
 	}
 
-	err := find.FindOne()
+	err = find.FindOne()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return
 	}
 
-	fmt.Printf("%v\n", tstruct.Test)
+	fmt.Printf("%v\n", testObj.Test)
 }
 
 func TestFindOneAndDelete(t *testing.T) {
-	var tstruct testStruct
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	var testObj testStruct
+
 	find := database.FindAndModify{
 		Db: database.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
 		},
-		Bind: &tstruct,
+		Bind: &testObj,
 	}
-	find.FindOneAndDelete()
+	err = find.FindOneAndDelete()
+	if err != nil {
+		fmt.Printf("err.Error(): %v\n", err.Error())
+		return
+	}
 }
 
 func TestFindOneAndReplace(t *testing.T) {
-	var tstruct testStruct
-	tstruct.Test = "test2"
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	var testObj testStruct
+	testObj.Test = "test2"
 	find := database.FindAndModify{
 		Db: database.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
 		},
-		Data: tstruct,
-		Bind: &tstruct,
+		Data: testObj,
+		Bind: &testObj,
 	}
 
-	err := find.FindOneAndReplace()
+	err = find.FindOneAndReplace()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
+		return
 	}
 
-	fmt.Printf("tstruct: %v\n", tstruct)
+	fmt.Printf("testObj: %v\n", testObj)
 }
 
 func TestFindOneAndUpdate(t *testing.T) {
-	var tstruct testStruct
-	tstruct.Test = "test2"
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	var testObject testStruct
+	testObject.Test = "test2"
 	find := database.FindAndModify{
 		Db: database.Db{
 			NameCollection: "test",
@@ -151,19 +197,26 @@ func TestFindOneAndUpdate(t *testing.T) {
 			Filter:         bson.D{{Key: "test", Value: "test"}},
 		},
 		Data: bson.D{{"$set", bson.E{Value: "ignacio"}}},
-		Bind: &tstruct,
+		Bind: &testObject,
 	}
 
-	err := find.FindOneAndUpdate()
+	err = find.FindOneAndUpdate()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
+		return
 	}
 
-	fmt.Printf("tstruct: %v\n", tstruct)
+	fmt.Printf("testObject: %v\n", testObject)
 }
 
 func TestDeleteOne(t *testing.T) {
-	delete := database.Delete{
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	deleteQuery := database.Delete{
 		Db: database.Db{
 			NameCollection: "test",
 			Database:       "test",
@@ -171,7 +224,7 @@ func TestDeleteOne(t *testing.T) {
 		},
 	}
 
-	_, err := delete.DeleteOne()
+	_, err = deleteQuery.DeleteOne()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return
@@ -179,7 +232,13 @@ func TestDeleteOne(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	delete := database.Delete{
+	err := database.Connect()
+	if err != nil {
+		return
+	}
+	defer database.Close()
+
+	deleteQuery := database.Delete{
 		Db: database.Db{
 			NameCollection: "test",
 			Database:       "test",
@@ -187,7 +246,7 @@ func TestDelete(t *testing.T) {
 		},
 	}
 
-	_, err := delete.Delete()
+	_, err = deleteQuery.Delete()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return
