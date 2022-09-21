@@ -13,6 +13,7 @@ type testStruct struct {
 }
 
 func TestSaveOne(m *testing.T) {
+	database.Connect()
 	s := database.Save{
 		Db: database.Db{
 			NameCollection: "test",
@@ -33,6 +34,7 @@ func TestSaveOne(m *testing.T) {
 }
 
 func TestSaveMany(t *testing.T) {
+	database.Connect()
 	s := database.Save{
 		Db: database.Db{
 			NameCollection: "test",
@@ -50,14 +52,19 @@ func TestSaveMany(t *testing.T) {
 		},
 	}
 
-	_, err := s.Save()
+	id, err := s.Save()
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
 		return
 	}
+
+	for i := range id.InsertedIDs {
+		fmt.Printf("id: %v\n", id.InsertedIDs[i])
+	}
 }
 
 func TestFind(t *testing.T) {
+	database.Connect()
 	var tstruct []testStruct
 	find := database.Find{
 		Db: database.Db{
@@ -77,6 +84,7 @@ func TestFind(t *testing.T) {
 	for i, ts := range tstruct {
 		fmt.Printf("%v: %v\n", i, ts.Test)
 	}
+	database.Close()
 }
 
 func TestFindOne(t *testing.T) {

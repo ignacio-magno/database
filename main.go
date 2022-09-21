@@ -11,7 +11,8 @@ import (
 
 var client *mongo.Client
 var ctx context.Context
-var cancel context.CancelFunc
+
+// var cancel context.CancelFunc
 
 var database = "test"
 
@@ -47,7 +48,7 @@ func Connect() {
 }
 
 func Close() {
-	defer cancel()
+	//defer cancel()
 	err := client.Disconnect(ctx)
 	if err != nil {
 		fmt.Printf("err.Error(): %v\n", err.Error())
