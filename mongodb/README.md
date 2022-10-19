@@ -1,5 +1,5 @@
 # Package
-go get github.com/ignacioMagno/database
+go get backend-contilab/database
 
 # Documentation
 Alway close Connection

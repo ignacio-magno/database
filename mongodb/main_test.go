@@ -1,10 +1,11 @@
-package database_test
+package mongodb_test
 
 import (
+	"backend-contilab/database/mongodb"
 	"fmt"
 	"testing"
 
-	database "github.com/ignacioMagno/database"
+	database "backend-contilab/database"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -13,18 +14,14 @@ type testStruct struct {
 }
 
 func TestSaveOne(m *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer database.Close()
+	defer mongodb.Close()
 
-	s := database.Save{
-		Db: database.Db{
+	s := mongodb.Save{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 		},
-		Add: database.Add{
+		Add: mongodb.Add{
 			Data: testStruct{
 				Test: "test",
 			},
@@ -41,18 +38,14 @@ func TestSaveOne(m *testing.T) {
 }
 
 func TestSaveMany(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer database.Close()
+	defer mongodb.Close()
 
-	s := database.Save{
-		Db: database.Db{
+	s := mongodb.Save{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 		},
-		Add: database.Add{
+		Add: mongodb.Add{
 			Datas: []interface{}{
 				testStruct{
 					Test: "test",
@@ -80,11 +73,11 @@ func TestFind(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
 	var tests []testStruct
-	find := database.Find{
-		Db: database.Db{
+	find := mongodb.Find{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
@@ -108,11 +101,11 @@ func TestFindOne(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
 	var testObj testStruct
-	find := database.Find{
-		Db: database.Db{
+	find := mongodb.Find{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
@@ -134,12 +127,12 @@ func TestFindOneAndDelete(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
 	var testObj testStruct
 
-	find := database.FindAndModify{
-		Db: database.Db{
+	find := mongodb.FindAndModify{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
@@ -158,12 +151,12 @@ func TestFindOneAndReplace(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
 	var testObj testStruct
 	testObj.Test = "test2"
-	find := database.FindAndModify{
-		Db: database.Db{
+	find := mongodb.FindAndModify{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
@@ -186,12 +179,12 @@ func TestFindOneAndUpdate(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
 	var testObject testStruct
 	testObject.Test = "test2"
-	find := database.FindAndModify{
-		Db: database.Db{
+	find := mongodb.FindAndModify{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
@@ -214,10 +207,10 @@ func TestDeleteOne(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
-	deleteQuery := database.Delete{
-		Db: database.Db{
+	deleteQuery := mongodb.Delete{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},
@@ -236,10 +229,10 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		return
 	}
-	defer database.Close()
+	defer mongodb.Close()
 
-	deleteQuery := database.Delete{
-		Db: database.Db{
+	deleteQuery := mongodb.Delete{
+		Db: mongodb.Db{
 			NameCollection: "test",
 			Database:       "test",
 			Filter:         bson.D{{Key: "test", Value: "test"}},

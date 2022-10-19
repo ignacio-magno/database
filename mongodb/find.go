@@ -1,12 +1,12 @@
-package database
+package mongodb
 
 type Find struct {
 	Db
 	Bind interface{}
 }
 
-func (f *Find) getBind() interface{} {
-	return f.Bind
+func (db *Find) getBind() interface{} {
+	return db.Bind
 }
 
 func (db *Find) Find() error {

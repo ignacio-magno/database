@@ -1,6 +1,8 @@
-package database
+package mongodb
 
-import "errors"
+import (
+	"errors"
+)
 
 type FindAndModify struct {
 	Db
@@ -20,7 +22,8 @@ func (f *FindAndModify) getFilter() interface{} {
 	return f.Filter
 }
 
-// replace all document
+// FindOneAndReplace replace all document
+// ! in decode bind the old document
 func (db *FindAndModify) FindOneAndReplace() error {
 	if db.getData() != nil {
 		res := client.Database(database).Collection(db.getNameCollection()).FindOneAndReplace(ctx, db.getFilter(), db.getData())
@@ -34,7 +37,8 @@ func (db *FindAndModify) FindOneAndReplace() error {
 	}
 }
 
-// need update operators
+// FindOneAndUpdate need update operators
+// ! in decode bind the old document
 func (db *FindAndModify) FindOneAndUpdate() error {
 	res := client.Database(database).Collection(db.getNameCollection()).FindOneAndUpdate(ctx, db.getFilter(), db.getData())
 	if res.Err() != nil {

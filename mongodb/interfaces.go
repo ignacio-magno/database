@@ -1,4 +1,4 @@
-package database
+package mongodb
 
 type IDb interface {
 	getNameCollection() string

@@ -1,11 +1,11 @@
-package saveorreplace
+package saveOrReplace
 
 import (
-	"github.com/ignacioMagno/database"
+	"github.com/ignacioMagno/database/mongodb"
 )
 
 type SaveOrReplace interface {
-	GetDatabase() database.Db
+	GetDatabase() mongodb.Db
 	GetFilter() interface{}
 	GetObject() interface{}
 	IsNew() bool
@@ -22,9 +22,9 @@ func Save(s SaveOrReplace) error {
 func saveNew(s SaveOrReplace) error {
 	db := s.GetDatabase()
 
-	save := database.Save{
+	save := mongodb.Save{
 		Db: db,
-		Add: database.Add{
+		Add: mongodb.Add{
 			Data: s.GetObject(),
 		},
 	}
@@ -40,7 +40,7 @@ func replace(s SaveOrReplace) error {
 
 	db.Filter = s.GetFilter()
 
-	save := database.FindAndModify{
+	save := mongodb.FindAndModify{
 		Db:   db,
 		Data: s.GetObject(),
 		Bind: &i,

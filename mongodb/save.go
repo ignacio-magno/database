@@ -1,8 +1,7 @@
-package database
+package mongodb
 
 import (
 	"fmt"
-
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -23,6 +22,11 @@ func (s *Save) SaveOne() (*mongo.InsertOneResult, error) {
 }
 
 func (s *Save) Save() (*mongo.InsertManyResult, error) {
+	/*
+		var manyOptions options.InsertManyOptions
+		manyOptions.SetOrdered(false)
+	*/
+
 	if s.getDatas() != nil {
 		res, err := client.Database(database).Collection(s.getNameCollection()).InsertMany(ctx, s.getDatas())
 		if err != nil {
