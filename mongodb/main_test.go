@@ -1,247 +1,33 @@
 package mongodb_test
 
 import (
-	"backend-contilab/database/mongodb"
 	"fmt"
-	"testing"
-
-	database "backend-contilab/database"
+	"github.com/ignacioMagno/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"testing"
 )
 
-type testStruct struct {
-	Test string `bson:"test" json:"test"`
+type Test struct {
+	Id   primitive.ObjectID `bson:"_id,omitempty"`
+	Name string             `bson:"name"`
 }
 
-func TestSaveOne(m *testing.T) {
-	defer mongodb.Close()
-
-	s := mongodb.Save{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-		},
-		Add: mongodb.Add{
-			Data: testStruct{
-				Test: "test",
-			},
-		},
-	}
-
-	i, err := s.SaveOne()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-
-	fmt.Printf("i: %v\n", i.InsertedID)
-}
-
-func TestSaveMany(t *testing.T) {
-	defer mongodb.Close()
-
-	s := mongodb.Save{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-		},
-		Add: mongodb.Add{
-			Datas: []interface{}{
-				testStruct{
-					Test: "test",
-				},
-				testStruct{
-					Test: "test",
-				},
-			},
-		},
-	}
-
-	id, err := s.Save()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-
-	for i := range id.InsertedIDs {
-		fmt.Printf("id: %v\n", id.InsertedIDs[i])
-	}
-}
+var r = mongodb.NewRepository[Test]("test", "test-package")
 
 func TestFind(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
+	result := r.Find(bson.M{r.Field(1): "test nachita"})
 
-	var tests []testStruct
-	find := mongodb.Find{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-		Bind: &tests,
-	}
-
-	err = find.Find()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-
-	for i, ts := range tests {
-		fmt.Printf("%v: %v\n", i, ts.Test)
+	for _, test := range result {
+		fmt.Println(test)
 	}
 }
 
-func TestFindOne(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
-
-	var testObj testStruct
-	find := mongodb.Find{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-		Bind: &testObj,
-	}
-
-	err = find.FindOne()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-
-	fmt.Printf("%v\n", testObj.Test)
+func TestSave(t *testing.T) {
+	r.Save(Test{Name: "test nachita"})
 }
 
-func TestFindOneAndDelete(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
-
-	var testObj testStruct
-
-	find := mongodb.FindAndModify{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-		Bind: &testObj,
-	}
-	err = find.FindOneAndDelete()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-}
-
-func TestFindOneAndReplace(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
-
-	var testObj testStruct
-	testObj.Test = "test2"
-	find := mongodb.FindAndModify{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-		Data: testObj,
-		Bind: &testObj,
-	}
-
-	err = find.FindOneAndReplace()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-
-	fmt.Printf("testObj: %v\n", testObj)
-}
-
-func TestFindOneAndUpdate(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
-
-	var testObject testStruct
-	testObject.Test = "test2"
-	find := mongodb.FindAndModify{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-		Data: bson.D{{"$set", bson.E{Value: "ignacio"}}},
-		Bind: &testObject,
-	}
-
-	err = find.FindOneAndUpdate()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-
-	fmt.Printf("testObject: %v\n", testObject)
-}
-
-func TestDeleteOne(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
-
-	deleteQuery := mongodb.Delete{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-	}
-
-	_, err = deleteQuery.DeleteOne()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
-}
-
-func TestDelete(t *testing.T) {
-	err := database.Connect()
-	if err != nil {
-		return
-	}
-	defer mongodb.Close()
-
-	deleteQuery := mongodb.Delete{
-		Db: mongodb.Db{
-			NameCollection: "test",
-			Database:       "test",
-			Filter:         bson.D{{Key: "test", Value: "test"}},
-		},
-	}
-
-	_, err = deleteQuery.Delete()
-	if err != nil {
-		fmt.Printf("err.Error(): %v\n", err.Error())
-		return
-	}
+func TestById(t *testing.T) {
+	result := r.FindById("63a901fefbd11b63c6a0bb8a")
+	fmt.Println(result)
 }

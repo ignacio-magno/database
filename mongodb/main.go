@@ -10,7 +10,6 @@ var client *mongo.Client
 var ctx context.Context
 
 // var cancel context.CancelFunc
-
 var database = "contilab"
 
 // Connect to the database
