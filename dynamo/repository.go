@@ -7,11 +7,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	StructKeys "github.com/ignacioMagno/database/dynamo/StructKeys"
 )
 
 type Repository[T any] struct {
-	StructKeys[T]
+	*StructKeys.KeysQuery[T]
 	NameCollection string
+}
+
+func NewRepositoryDynamo[T any](nameDatabase string, haveTwoKeys bool) *Repository[T] {
+	return &Repository[T]{
+		NameCollection: nameDatabase,
+		KeysQuery:      StructKeys.NewKeysQuery[T](haveTwoKeys),
+	}
 }
 
 func (m *Repository[T]) GetNameCollection() string {
@@ -30,11 +38,21 @@ func (m *Repository[T]) GenerateProjectionExpressionExclude(filters []string) *s
 // * optional
 // secondary key = keys[1]
 func (m *Repository[T]) Find(keys []interface{}, queryInputHandler ...func(input *dynamodb.QueryInput)) ([]T, error) {
+	var (
+		queryInput dynamodb.QueryInput
+		err        error
+	)
 
-	var queryInput dynamodb.QueryInput
+	bta, err := m.BuildTypesAttribute(keys, false)
+	if err != nil {
+		return nil, err
+	}
 
 	queryInput.TableName = aws.String(m.GetNameCollection())
-	queryInput.KeyConditions = m.GetKeyConditions(keys)
+	queryInput.KeyConditions, err = bta.GetKeyConditions()
+	if err != nil {
+		return nil, err
+	}
 
 	for _, f := range queryInputHandler {
 		f(&queryInput)
@@ -82,12 +100,19 @@ func (m *Repository[T]) FindOne(id []interface{}) (T, error) {
 
 // Update if the table have 2 keys, then set boot keys
 func (m *Repository[T]) Update(keys []interface{}, update map[string]types.AttributeValueUpdate) (T, error) {
+	var (
+		t   T
+		err error
+	)
 
-	var t T
+	bta, err := m.BuildTypesAttribute(keys, true)
+	if err != nil {
+		return t, err
+	}
 
 	res, err := dynamoClient.UpdateItem(context.Background(), &dynamodb.UpdateItemInput{
 		TableName:        aws.String(m.GetNameCollection()),
-		Key:              m.GetAttributeValue(keys),
+		Key:              bta.GetAttributeWithKeys(),
 		AttributeUpdates: update,
 	})
 
@@ -129,9 +154,14 @@ func (m *Repository[T]) SaveMany(documents []T) error {
 }
 
 func (m *Repository[T]) Delete(keys []interface{}) error {
-	_, err := dynamoClient.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
+	att, err := m.BuildTypesAttribute(keys, true)
+	if err != nil {
+		return err
+	}
+
+	_, err = dynamoClient.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(m.GetNameCollection()),
-		Key:       m.GetAttributeValue(keys),
+		Key:       att.GetAttributeWithKeys(),
 	})
 
 	return err

@@ -1,21 +1,69 @@
 package dynamo
 
 import (
-	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"testing"
 )
 
-var repoTest = NewRepositoryTest()
+type TestStruct struct {
+	IdBusiness string `dynamodbav:"var_id_client"`
+	TypeEntity string `dynamodbav:"var_id_business_type_entity"`
+	Data       string `dynamodbav:"data"`
+}
 
-func TestDynamo(t *testing.T) {
+var repo = NewRepositoryDynamo[TestStruct]("contilab", true)
 
-	find, err := repoTest.Find("123")
+func TestMain(m *testing.M) {
+	m.Run()
+}
+
+func TestSave(t *testing.T) {
+	err := repo.SaveOrReplace(TestStruct{
+		IdBusiness: "nacho",
+		TypeEntity: "1",
+		Data:       "data",
+	})
 	if err != nil {
-		return
+		t.Error(err)
+	}
+}
+
+func TestFind(t *testing.T) {
+	res, err := repo.Find([]interface{}{"nacho", "1"})
+	if err != nil {
+		t.Error(err)
 	}
 
-	for _, testStruct := range find {
-		fmt.Println(testStruct)
+	t.Log(res)
+}
+
+func TestFindOne(t *testing.T) {
+	res, err := repo.FindOne([]interface{}{"nacho", "1"})
+	if err != nil {
+		t.Error(err)
 	}
 
+	t.Log(res)
+}
+
+func TestUpdate(t *testing.T) {
+	j, err := repo.Update([]interface{}{"nacho", "1"}, map[string]types.AttributeValueUpdate{
+		"data": {
+			Action: types.AttributeActionPut,
+			Value:  &types.AttributeValueMemberS{Value: "data2"},
+		},
+	})
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(j)
+}
+
+func TestDelete(t *testing.T) {
+	err := repo.Delete([]interface{}{"nacho", "1"})
+	if err != nil {
+		t.Error(err)
+	}
 }
