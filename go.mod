@@ -1,4 +1,4 @@
-module github.com/ignacioMagno/database
+module github.com/ignacio-magno/database
 
 go 1.18
 
