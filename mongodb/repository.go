@@ -40,13 +40,13 @@ func (r *Repository[T]) Find(filter interface{}) []T {
 	return result
 }
 
-func (r *Repository[T]) Save(model T) T {
-	_, err := client.Database(r.database).Collection(r.collection).InsertOne(ctx, model)
+func (r *Repository[T]) Save(model T) primitive.ObjectID {
+	id, err := client.Database(r.database).Collection(r.collection).InsertOne(ctx, model)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	return model
+	return id.InsertedID.(primitive.ObjectID)
 }
 
 func (r *Repository[T]) FindById(id string) T {
