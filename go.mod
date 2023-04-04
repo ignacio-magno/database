@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.17.1
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/ignacioMagno/utils v0.0.0-20221019203746-9fe483ad5d72
+	github.com/ignacio-magno/utils v0.0.0-20230404031103-2ffbc1b4d51c
 	go.mongodb.org/mongo-driver v1.10.3
 )
 

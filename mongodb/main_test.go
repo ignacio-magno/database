@@ -2,7 +2,7 @@ package mongodb_test
 
 import (
 	"fmt"
-	"github.com/ignacioMagno/database/mongodb"
+	"github.com/ignacio-magno/database/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"testing"

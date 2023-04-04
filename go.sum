@@ -47,8 +47,8 @@ github.com/golang/snappy v0.0.1/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEW
 github.com/google/go-cmp v0.5.2/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
 github.com/google/go-cmp v0.5.8/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/ignacioMagno/utils v0.0.0-20221019203746-9fe483ad5d72 h1:hyJJPEvjVumPgp52N/5d8hVeyJE4Ld+Az0S9A1Z9WWM=
-github.com/ignacioMagno/utils v0.0.0-20221019203746-9fe483ad5d72/go.mod h1:+jyRicMWdZbq+enm7s/xg1kaZTzpnxMSMhrfzX7+AAA=
+github.com/ignacio-magno/utils v0.0.0-20230404031103-2ffbc1b4d51c h1:p2/q534IMMacoN7TY3s5IhNKg+LRmta6+q6yKVaZ/Ek=
+github.com/ignacio-magno/utils v0.0.0-20230404031103-2ffbc1b4d51c/go.mod h1:aqBiRwTBuRF/0jgtZ3h0gq/FE2Cv0HCTasaeSUvWWGo=
 github.com/jmespath/go-jmespath v0.4.0 h1:BEgLn5cpjn8UN1mAw4NjwDrS35OdebyEtFe+9YPoQUg=
 github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHWvzYPziyZiYoo=
 github.com/jmespath/go-jmespath/internal/testify v1.5.1 h1:shLQSRRSCCPj3f2gpwzGwWFoC7ycTf1rcQZHOlsJ6N8=

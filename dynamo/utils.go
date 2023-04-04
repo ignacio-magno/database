@@ -2,7 +2,7 @@ package dynamo
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
-	tags "github.com/ignacioMagno/utils/structTags"
+	tags "github.com/ignacio-magno/utils/structTags"
 	"strings"
 )
 

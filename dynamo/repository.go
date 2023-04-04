@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	StructKeys "github.com/ignacioMagno/database/dynamo/StructKeys"
+	StructKeys "github.com/ignacio-magno/database/dynamo/StructKeys"
 )
 
 type Repository[T any] struct {
