@@ -58,7 +58,7 @@ func (m *Repository[T]) Find(keys []interface{}, queryInputHandler ...func(input
 		f(&queryInput)
 	}
 
-	query, err := dynamoClient.Query(context.Background(), &queryInput)
+	query, err := DynamoClient.Query(context.Background(), &queryInput)
 
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (m *Repository[T]) Update(keys []interface{}, update map[string]types.Attri
 		return t, err
 	}
 
-	res, err := dynamoClient.UpdateItem(context.Background(), &dynamodb.UpdateItemInput{
+	res, err := DynamoClient.UpdateItem(context.Background(), &dynamodb.UpdateItemInput{
 		TableName:        aws.String(m.GetNameCollection()),
 		Key:              bta.GetAttributeWithKeys(),
 		AttributeUpdates: update,
@@ -134,7 +134,7 @@ func (m *Repository[T]) SaveOrReplace(document T) error {
 		return err
 	}
 
-	item, err := dynamoClient.PutItem(context.Background(), &dynamodb.PutItemInput{
+	item, err := DynamoClient.PutItem(context.Background(), &dynamodb.PutItemInput{
 		TableName: aws.String(m.GetNameCollection()),
 		Item:      marshalMap,
 	})
@@ -159,7 +159,7 @@ func (m *Repository[T]) Delete(keys []interface{}) error {
 		return err
 	}
 
-	_, err = dynamoClient.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
+	_, err = DynamoClient.DeleteItem(context.Background(), &dynamodb.DeleteItemInput{
 		TableName: aws.String(m.GetNameCollection()),
 		Key:       att.GetAttributeWithKeys(),
 	})
